@@ -54,10 +54,12 @@ if ($lfsAvailable) {
 # ------ STEP 1: Auto-generate index.json -----------------------------------------------------------------------
 Write-Host "`nScanning folders and generating index.json..."
 
+$repoRootPython = $repoRoot.Replace('\\', '\\\\')
+
 $pythonScript = @"
 import os, re, json
 
-ROOT = r'D:\\PhD\\TDE'
+ROOT = r'$repoRootPython'
 
 SKIP_FOLDERS = {'.git', '__pycache__', 'node_modules', '.venv', 'venv', 'debug', '.github'}
 SKIP_FILES   = {'index.html', 'index.json', 'sync.ps1', 'readme.md', '404.html'}
@@ -150,19 +152,39 @@ if ($LASTEXITCODE -ne 0) {
 
 # ------ STEP 5: Push -------------------------------------------------------------------------------------------
 Write-Host "`nPushing to GitHub..."
-git push origin main 2>&1 | Out-Null
-if ($LASTEXITCODE -eq 0) {
-  Write-Host "[OK] Push complete"
-} else {
-  Write-Host "[WARN] Normal push failed --- trying with LFS retry..."
-  git lfs push origin main --all 2>&1 | Out-Null
-  git push origin main 2>&1 | Out-Null
-  if ($LASTEXITCODE -eq 0) { Write-Host "[OK] Push complete (after LFS retry)" }
-  else {
-    git push origin main --force 2>&1 | Out-Null
-    if ($LASTEXITCODE -eq 0) { Write-Host "[OK] Push complete (forced)" }
-    else                      { Write-Host "[ERROR] Push failed"; exit 1 }
-  }
+
+function Try-Push {
+  param(
+    [string]$Args,
+    [string]$Label
+  )
+  Write-Host "  -> $Label"
+  Invoke-Expression $Args
+  return ($LASTEXITCODE -eq 0)
 }
+
+$pushOk = $false
+
+$pushOk = Try-Push -Args 'git push origin main' -Label 'Standard push'
+
+if (-not $pushOk -and $lfsAvailable) {
+  Write-Host "[WARN] Standard push failed --- pre-pushing LFS objects and retrying..."
+  git lfs push origin main --all
+  $pushOk = Try-Push -Args 'git push origin main' -Label 'Push after LFS pre-push'
+}
+
+if (-not $pushOk) {
+  Write-Host "[WARN] Push still failing --- retrying with conservative HTTP settings..."
+  $pushOk = Try-Push -Args 'git -c http.version=HTTP/1.1 -c http.lowSpeedLimit=0 -c http.lowSpeedTime=999999 push origin main' -Label 'HTTP/1.1 retry'
+}
+
+if (-not $pushOk) {
+  Write-Host "[ERROR] Push failed after retries"
+  Write-Host "       Suggestion: switch remote to SSH and retry:"
+  Write-Host "       git remote set-url origin git@github.com:<owner>/<repo>.git"
+  exit 1
+}
+
+Write-Host "[OK] Push complete"
 
 Write-Host "`n[OK] Sync complete`n"
