@@ -155,27 +155,28 @@ Write-Host "`nPushing to GitHub..."
 
 function Try-Push {
   param(
-    [string]$Args,
+    [string]$CommandText,
     [string]$Label
   )
   Write-Host "  -> $Label"
-  Invoke-Expression $Args
-  return ($LASTEXITCODE -eq 0)
+  if ([string]::IsNullOrWhiteSpace($CommandText)) { return $false }
+  Invoke-Expression -Command $CommandText
+  return ($? -and $LASTEXITCODE -eq 0)
 }
 
 $pushOk = $false
 
-$pushOk = Try-Push -Args 'git push origin main' -Label 'Standard push'
+$pushOk = Try-Push -CommandText 'git push origin main' -Label 'Standard push'
 
 if (-not $pushOk -and $lfsAvailable) {
   Write-Host "[WARN] Standard push failed --- pre-pushing LFS objects and retrying..."
   git lfs push origin main --all
-  $pushOk = Try-Push -Args 'git push origin main' -Label 'Push after LFS pre-push'
+  $pushOk = Try-Push -CommandText 'git push origin main' -Label 'Push after LFS pre-push'
 }
 
 if (-not $pushOk) {
   Write-Host "[WARN] Push still failing --- retrying with conservative HTTP settings..."
-  $pushOk = Try-Push -Args 'git -c http.version=HTTP/1.1 -c http.lowSpeedLimit=0 -c http.lowSpeedTime=999999 push origin main' -Label 'HTTP/1.1 retry'
+  $pushOk = Try-Push -CommandText 'git -c http.version=HTTP/1.1 -c http.lowSpeedLimit=0 -c http.lowSpeedTime=999999 push origin main' -Label 'HTTP/1.1 retry'
 }
 
 if (-not $pushOk) {
