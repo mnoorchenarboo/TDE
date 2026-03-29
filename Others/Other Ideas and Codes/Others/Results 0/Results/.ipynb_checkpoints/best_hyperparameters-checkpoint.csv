@@ -1,2 +1,0 @@
-type,dataset_name,best_params,duration,mse_score,rmse_score,mae_score,smape_score,mape_score,r2_score
-CNN,house1.csv,"{'filters': 108, 'kernel_size': 3, 'dropout_rate': 0.28368730738709724, 'num_conv_layers': 3, 'optimizer': 'adam', 'l2_reg': 0.00012164265064888484}",43.660594,0.14,0.37,0.25,2.32,2.31,0.0745

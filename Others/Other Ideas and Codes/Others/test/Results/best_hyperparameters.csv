@@ -1,3 +1,0 @@
-type,dataset_name,best_params,duration,mse_score,rmse_score,mae_score,smape_score,mape_score,r2_score
-CNN,house1.csv,"{'filters': 109, 'kernel_size': 5, 'dropout_rate': 0.34306809556996687, 'num_conv_layers': 1, 'optimizer': 'adam', 'l2_reg': 0.0001008253673758062}",9.639003,0.09,0.3,0.17,35.99,45.72,0.4016
-TCN,house1.csv,"{'filters': 33, 'kernel_size': 3, 'dropout_rate': 0.372243762781189, 'num_tcn_blocks': 3, 'dilation_base': 4, 'l2_reg': 2.3301698415631053e-06, 'optimizer': 'rmsprop'}",29.201009,0.07,0.26,0.15,39.28,41.26,0.5217

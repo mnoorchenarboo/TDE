@@ -1,6 +1,0 @@
-type,dataset_name,best_params,duration,mse_score,rmse_score,mae_score,smape_score,mape_score,r2_score
-GRU,synthetic_data,"{'gru_units': 107, 'dropout_rate': 0.20220468104347158, 'num_gru_layers': 2, 'optimizer': 'adam', 'l2_reg': 1.1392745509988236e-05, 'learning_rate': 0.0003914193884604687}",194.080765,272.15,16.5,13.79,15.1,16.07,-0.022
-TFT,synthetic_data,"{'hidden_units': 37, 'dropout_rate': 0.33302093636513835, 'num_lstm_layers': 2, 'num_heads': 2, 'num_attention_blocks': 2, 'l2_reg': 6.770477200928696e-05, 'optimizer': 'adam'}",116.138547,86.01,9.27,7.37,8.2,8.51,0.677
-TST,synthetic_data,"{'d_model': 90, 'num_heads': 7, 'num_transformer_layers': 4, 'ff_dim': 397, 'dropout_rate': 0.2447773585542465, 'optimizer': 'rmsprop'}",422.707859,110.93,10.53,8.4,9.32,9.88,0.5834
-LSTM,synthetic_data,"{'lstm_units': 70, 'dropout_rate': 0.46985737459883, 'num_lstm_layers': 2, 'optimizer': 'rmsprop', 'l2_reg': 1.0497196256905665e-06, 'learning_rate': 0.0003007673590828955}",146.271581,100.6,10.03,8.12,8.85,9.21,-0.0571
-CNN,synthetic_data,"{'filters': 116, 'kernel_size': 5, 'dropout_rate': 0.3508661032634679, 'num_conv_layers': 2, 'optimizer': 'adam', 'l2_reg': 1.0331651451008916e-06}",10.96598,203.37,14.26,11.4,12.68,13.95,0.0172
